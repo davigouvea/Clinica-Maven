@@ -1,0 +1,88 @@
+package br.com.clinica.service;
+
+import java.util.List;
+
+
+import br.com.clinica.exceptions.AgendamentoExceptions;
+import br.com.clinica.model.Animal;
+import br.com.clinica.model.Cachorro;
+import br.com.clinica.model.Consulta;
+import br.com.clinica.model.Gato;
+import br.com.clinica.model.Tutor;
+import br.com.clinica.repository.AnimalRepository;
+import br.com.clinica.repository.ConsultaRepository;
+import br.com.clinica.repository.TutorRepository;
+
+
+
+public class ClinicaService {
+
+
+    private TutorRepository tutorRepository;
+    private AnimalRepository animalRepository;
+    private ConsultaRepository consultaRepository;
+
+    public ClinicaService() {
+        this.tutorRepository = new TutorRepository();
+        this.animalRepository = new AnimalRepository();
+        this.consultaRepository = new ConsultaRepository();
+    }
+
+    // --- Métodos de Negócio para Tutores ---
+    public void cadastrarTutor(String nome, String cpf, String telefone) throws AgendamentoExceptions {
+        if (tutorRepository.buscarPorCpf(cpf) != null) {
+            throw new AgendamentoExceptions("Erro: Já existe um tutor cadastrado com este CPF.");
+        }
+
+        Tutor novoTutor = new Tutor(nome, cpf, telefone);
+        tutorRepository.salvar(novoTutor);
+    }
+
+    public Tutor buscarTutorPorCpf(String cpf) {
+        return tutorRepository.buscarPorCpf(cpf);
+    }
+
+    public List<Tutor> listarTodosTutores() {
+        return tutorRepository.listarTodos();
+    }
+
+    // --- Métodos de Negócio para Animais ---
+    public void cadastrarAnimal(String nomeAnimal, int idade, String tipoAnimal, String racaOuPelagem, String cpfTutor) throws AgendamentoExceptions {
+        Tutor tutor = tutorRepository.buscarPorCpf(cpfTutor);
+        if (tutor == null) {
+            throw new AgendamentoExceptions("Erro: O tutor com CPF " + cpfTutor + " não foi encontrado.");
+        }
+
+        Animal novoAnimal;
+
+        if ("cachorro".equalsIgnoreCase(tipoAnimal)) {
+            novoAnimal = new Cachorro(nomeAnimal, idade, tutor, racaOuPelagem);
+        } else if ("gato".equalsIgnoreCase(tipoAnimal)) {
+            novoAnimal = new Gato(nomeAnimal, idade, tutor, racaOuPelagem);
+        } else {
+            throw new AgendamentoExceptions("Erro: Tipo de animal inválido. Use 'cachorro' ou 'gato'.");
+        }
+        animalRepository.salvar(novoAnimal);
+    }
+
+    public List<Animal> listarTodosAnimais() {
+        return animalRepository.listarTodos();
+    }
+
+    // --- Métodos de Negócio para Consultas ---
+
+    public void agendarConsulta(Animal animal, String descricao) {
+        Consulta novaConsulta = new Consulta(animal, descricao);
+        consultaRepository.salvar(novaConsulta);
+        // (Poderíamos adicionar regras de negócio aqui, como limite de consultas)
+    }
+
+    public List<Consulta> listarTodasConsultas() {
+        return consultaRepository.listarTodos();
+    }
+
+    // --- Métodos de Persistência ---
+    public void salvarDados() {
+        tutorRepository.salvarDados();
+    }
+}
