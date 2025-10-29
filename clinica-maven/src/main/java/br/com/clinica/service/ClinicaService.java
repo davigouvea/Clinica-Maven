@@ -74,7 +74,6 @@ public class ClinicaService {
     public void agendarConsulta(Animal animal, String descricao) {
         Consulta novaConsulta = new Consulta(animal, descricao);
         consultaRepository.salvar(novaConsulta);
-        // (Poderíamos adicionar regras de negócio aqui, como limite de consultas)
     }
 
     public List<Consulta> listarTodasConsultas() {

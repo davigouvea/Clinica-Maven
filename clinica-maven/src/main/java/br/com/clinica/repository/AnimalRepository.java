@@ -7,7 +7,6 @@ import java.util.List;
 import br.com.clinica.model.Animal;
 public class AnimalRepository {
 
-    // Uso de Collections (ArrayList)
     private List<Animal> animais = new ArrayList<>();
 
     public void salvar(Animal animal) {

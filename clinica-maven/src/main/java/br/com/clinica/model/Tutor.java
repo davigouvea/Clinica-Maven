@@ -2,7 +2,6 @@ package br.com.clinica.model;
 
 public class Tutor {
 
-    // 1. Atributos privados (Encapsulamento)
     private String nome;
     private String cpf;
     private String telefone;
